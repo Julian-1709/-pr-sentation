@@ -26,7 +26,7 @@ const C = pres.SchemeColor;
 
 // ---------- Layouts ----------
 // Jede Folie nutzt das Bild der Titelfolie (ohne Titeltext) als Hintergrund.
-const BG = { path: A("bg_titelbild.jpg") };
+const BG = { path: A("bg_titelbild_rand.jpg") };
 pres.defineSlideMaster({
   title: "Kapitel",
   background: BG,
