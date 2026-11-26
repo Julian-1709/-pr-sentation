@@ -64,7 +64,7 @@ const LX = 0.6, LW = 4.35;
 function points(s, items, y0 = 1.3) {
   let y = y0;
   items.forEach(([h, d, a], i) => {
-    const ref = a ? " (" + zref(a.anchor).replace(/ /g, "\u00A0") + ")" : "";
+    const ref = ""; // Angaben stehen nur bei den Zitatkästen rechts
     const hh = 0.3, dh = lines(d + ref, 45) * 0.24 + 0.05;
     txt(s, [
       { text: h, options: { bold: true, fontSize: 15, color: C.accent1, fontFace: THEME.headFontFace, breakLine: true } },
@@ -258,7 +258,7 @@ Die Vater-Sohn-Beziehung zeigt also, wie ein Sohn an der Härte und fehlenden An
 
 // ===== Folie 8: Quellen (wird selbst ausgefüllt) =====
 s = content("Quellen");
-s.addNotes("Quellen bitte selbst eintragen. Tipp: Die Zeilenangaben (Z.) beziehen sich auf die zeilennummerierte Textgrundlage (Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf) – Text der Erstausgabe 1915 nach Projekt Gutenberg, E-Book Nr. 22367.");
+s.addNotes("Quellen bitte selbst eintragen. Tipp: Die Angaben (S., Z.) beziehen sich auf die zeilennummerierte Textgrundlage (Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf) – Text der Erstausgabe 1915 nach Projekt Gutenberg, E-Book Nr. 22367.");
 
 (async () => {
   await pres.writeFile({ fileName: OUT });

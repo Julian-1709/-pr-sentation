@@ -60,6 +60,8 @@ LH = 14.2  # Zeilenabstand in pt
 c = canvas.Canvas(str(PDF), pagesize=A4)
 c.setTitle("Franz Kafka: Die Verwandlung – zeilennummerierte Textgrundlage")
 page = 1
+pos = {}  # globale Zeile -> (Seite, Zeile auf der Seite)
+pline = 0
 
 
 def footer():
@@ -77,7 +79,7 @@ y -= 18
 c.setFont("SerifI", 9.5)
 for t in (
     "Text der Erstausgabe 1915 (gemeinfrei), nach Projekt Gutenberg, E-Book Nr. 22367.",
-    f"Zeilen durchgehend nummeriert (Z. 1–{TOTAL}); alle Zeilenangaben der Präsentation beziehen sich auf diese Fassung.",
+    "Zeilen auf jeder Seite neu gezählt; alle Angaben (S. …, Z. …) der Präsentation beziehen sich auf diese Fassung.",
 ):
     c.drawString(LEFT, y, t)
     y -= 12
@@ -89,6 +91,7 @@ for art, text, num, _ in rows:
         footer()
         c.showPage()
         page += 1
+        pline = 0
         y = TOP
     if art == "teil":
         y -= 8
@@ -98,12 +101,14 @@ for art, text, num, _ in rows:
     elif art == "absatz":
         y -= 3
     else:
+        pline += 1
+        pos[num] = (page, pline)
         c.setFont("Serif", 11)
         c.drawString(LEFT, y, text)
-        if num % 5 == 0 or num == 1:
+        if pline % 5 == 0:  # Zeilenzählung beginnt auf jeder Seite neu (wie in Schulausgaben)
             c.setFont("Serif", 8)
             c.setFillGray(0.4)
-            c.drawRightString(LEFT - 5 * mm, y + 0.5, str(num))
+            c.drawRightString(LEFT - 5 * mm, y + 0.5, str(pline))
             c.setFillGray(0)
         y -= LH
 footer()
@@ -147,12 +152,15 @@ def span(text):
     return owner[a], owner[pos]
 
 
-def fmt(z1, z2):
+def fmt(n1, n2):
+    (p1, z1), (p2, z2) = pos[n1], pos[n2]
+    if p1 != p2:
+        return f"S. {p1}, Z. {z1} – S. {p2}, Z. {z2}"
     if z2 == z1:
-        return f"Z. {z1}"
+        return f"S. {p1}, Z. {z1}"
     if z2 == z1 + 1:
-        return f"Z. {z1} f."
-    return f"Z. {z1} ff."
+        return f"S. {p1}, Z. {z1} f."
+    return f"S. {p1}, Z. {z1} ff."
 
 
 js = (ROOT / "build_deck.js").read_text(encoding="utf-8")

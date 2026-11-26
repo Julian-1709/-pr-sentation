@@ -2,7 +2,7 @@
 
 Dauer ca. 6–7 Minuten. **ROT VORLESEN →** markiert die Zitate, die auf der Folie rot hinterlegt sind. Die übrigen Zitate stehen als Beleg auf der Folie.
 
-Die Zeilenangaben (Z.) beziehen sich auf `Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf` (Text der Erstausgabe 1915, alte Rechtschreibung „daß“, durchgehend nummeriert).
+Die Angaben (S. …, Z. …) beziehen sich auf `Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf` (Text der Erstausgabe 1915, alte Rechtschreibung „daß“, Zeilen pro Seite gezählt).
 
 ## Folie 1: 
 
