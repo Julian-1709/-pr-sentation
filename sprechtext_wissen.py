@@ -18,7 +18,7 @@ ROOT = Path(__file__).parent
 SPRECH = [
     ("Folie 1 – Vater-Sohn-Beziehung", "ca. 20 Sek.", [
         "Ich stelle euch das **Motiv der Vater-Sohn-Beziehung** vor – ein Thema, das sich durch alle drei Teile der Erzählung zieht.",
-        "Meine These lautet: „Die Verwandlung“ ist nicht nur die Geschichte eines Mannes, der zum Käfer wird, sondern auch ein **Machtkampf zwischen Vater und Sohn**.",
+        "Ich zeige euch, wie sich das Verhältnis zwischen Gregor und seinem Vater im Laufe der Geschichte verändert – und dass es dabei vor allem um **Macht** geht.",
         "Ich zeige euch erst die Ausgangslage, dann die Konfrontationen aus den drei Teilen und am Ende mein Fazit.",
     ]),
     ("Folie 2 – Ausgangslage: Der Sohn als Ernährer", "ca. 50 Sek.", [
@@ -174,24 +174,73 @@ const { chromium } = require('playwright');
     subprocess.run(["node", "-e", js, html_path.resolve().as_uri(), str(pdf_path)], check=True)
 
 
-# Sprechtext
+# Sprechtext als Karteikarten: eine Folie pro Karte (DIN A6 quer) + Druckbogen (4 Karten pro A4)
 words = 0
-body = ["<h1>Sprechtext: Motiv Vater-Sohn-Beziehung</h1>",
-        "<p class='sub'>Franz Kafka: Die Verwandlung – Julian Sickinger · Dauer ca. 6–6½ Minuten</p>",
-        "<div class='hinweis'><b>So benutzt du den Text:</b> Die <span style='color:#6B1F1A;font-weight:bold'>roten Zitate</span> liest du wörtlich vor, langsam und mit kurzer Pause davor. Den Rest kannst du frei mit eigenen Worten sagen. Die <b>fetten Wörter</b> sind die Kernbegriffe, die du betonen solltest. Seiten- und Zeilenangaben beziehen sich auf die nummerierte Textgrundlage.</div>"]
+cards = []
 for titel, zeit, absaetze in SPRECH:
-    body.append(f"<div class='folie'><h2>{html.escape(titel)} <span class='zeit'>{html.escape(zeit)}</span></h2>")
+    inner = [f"<div class='kopf'><span class='t'>{html.escape(titel)}</span><span class='zeit'>{html.escape(zeit)}</span></div>"]
     for a in absaetze:
         words += len(re.sub(r"\(S\. [^)]*\)", "", a).split())
         if a.startswith("[["):
-            body.append(f"<p class='rot'>🔴 {inline(a[2:-2])}</p>")
+            inner.append(f"<p class='rot'>🔴 {inline(a[2:-2])}</p>")
         else:
-            body.append(f"<p>{inline(a)}</p>")
-    body.append("</div>")
+            inner.append(f"<p>{inline(a)}</p>")
+    cards.append("<div class='card'><div class='fit'>" + "".join(inner) + "</div></div>")
 minutes = f"{words / 115:.1f}–{words / 105:.1f}"
-body.insert(2, f"<p class='sub'>Umfang: ca. {words} Wörter ≈ {minutes} Minuten mit Pausen vor den Zitaten</p>")
-doc = f"<!doctype html><html lang='de'><head><meta charset='utf-8'><title>Sprechtext</title><style>{CSS}</style></head><body>{''.join(body)}</body></html>"
-to_pdf(doc, ROOT / "Sprechtext_Vater-Sohn-Beziehung.html", ROOT / "Sprechtext_Vater-Sohn-Beziehung.pdf")
+
+CARD_CSS = """
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'DejaVu Serif', Georgia, serif; color: #1E1812; }
+.card { width: var(--w); height: var(--h); padding: 5mm 6mm; overflow: hidden; background: #fff; }
+.fit { height: 100%; overflow: hidden; line-height: 1.38; }
+.kopf { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #C9BBA3; margin-bottom: 0.5em; padding-bottom: 0.2em; }
+.kopf .t { font-weight: bold; color: #6B1F1A; font-size: 1.12em; }
+.kopf .zeit { font-size: 0.85em; color: #5C4B3A; white-space: nowrap; margin-left: 1em; }
+p { margin: 0 0 0.45em; }
+p.rot { color: #6B1F1A; font-weight: bold; font-style: italic; background: #F6EEEA; border-left: 3px solid #6B1F1A; padding: 0.25em 0.5em; }
+"""
+FIT_JS = """
+for (const f of document.querySelectorAll('.fit')) {
+  let size = 12;
+  f.style.fontSize = size + 'pt';
+  while (f.scrollHeight > f.clientHeight + 1 && size > 6) { size -= 0.25; f.style.fontSize = size + 'pt'; }
+}
+"""
+
+
+def to_pdf_css(html_text, html_path, pdf_path):
+    html_path.write_text(html_text, encoding="utf-8")
+    js = """
+const { chromium } = require('playwright');
+(async () => {
+  const b = await chromium.launch();
+  const p = await b.newPage();
+  await p.goto(process.argv[1]);
+  await p.waitForTimeout(200);
+  await p.pdf({ path: process.argv[2], preferCSSPageSize: true, printBackground: true });
+  await b.close();
+})();
+"""
+    subprocess.run(["node", "-e", js, html_path.resolve().as_uri(), str(pdf_path)], check=True)
+
+
+# a) eine Karte pro Seite (Seite = DIN A6 quer)
+doc = ("<!doctype html><html lang='de'><head><meta charset='utf-8'><title>Karteikarten Sprechtext</title><style>"
+       "@page { size: 148mm 105mm; margin: 0; } :root { --w: 148mm; --h: 105mm; } .card { break-after: page; }"
+       + CARD_CSS + "</style></head><body>" + "".join(cards) + f"<script>{FIT_JS}</script></body></html>")
+to_pdf_css(doc, ROOT / "Sprechtext_Karteikarten.html", ROOT / "Sprechtext_Vater-Sohn-Beziehung.pdf")
+
+# b) Druckbogen: 4 Karten pro A4 quer, mit Schnittlinien
+sheets = []
+for i in range(0, len(cards), 4):
+    sheets.append("<div class='sheet'>" + "".join(cards[i:i + 4]) + "</div>")
+doc = ("<!doctype html><html lang='de'><head><meta charset='utf-8'><title>Karteikarten Druckbogen</title><style>"
+       "@page { size: A4 landscape; margin: 0; } :root { --w: 140mm; --h: 98mm; }"
+       ".sheet { width: 297mm; height: 210mm; display: grid; grid-template-columns: 140mm 140mm; grid-template-rows: 98mm 98mm;"
+       " gap: 0; justify-content: center; align-content: center; break-after: page; }"
+       ".sheet .card { outline: 0.4pt dashed #999; }"
+       + CARD_CSS + "</style></head><body>" + "".join(sheets) + f"<script>{FIT_JS}</script></body></html>")
+to_pdf_css(doc, ROOT / "Sprechtext_Druckbogen.html", ROOT / "Sprechtext_Karteikarten_Druckbogen_A4.pdf")
 
 # Wissen
 body = ["<h1>Wissen: Die Verwandlung</h1>",
