@@ -7,6 +7,10 @@ const { applyTheme } = require(process.argv[2]);
 const A = (f) => path.join(__dirname, "assets", f);
 // Zeilenangaben (von textgrundlage.py berechnet)
 const Z = JSON.parse(require("fs").readFileSync(path.join(__dirname, "zeilen.json"), "utf8"));
+// Sprechtext-Stichpunkte für die Notizen (von vorbereitung.py erzeugt)
+const NOTES = JSON.parse(require("fs").readFileSync(path.join(__dirname, "notizen.json"), "utf8"));
+let noteNo = 0;
+const nextNote = () => NOTES[String(++noteNo)];
 const zref = (k) => { if (!Z[k]) throw new Error("Keine Zeilenangabe für: " + k); return Z[k]; };
 const OUT = path.join(__dirname, "Vater-Sohn-Beziehung.pptx");
 
@@ -134,12 +138,7 @@ s.addText("Vater-Sohn-\nBeziehung", { placeholder: "title" });
 s.addText("Macht, Schuld und Ohnmacht in „Die Verwandlung“", { placeholder: "sub" });
 rule(s, 4.53, 1.62, 2.54, "Linie oben");
 rule(s, 4.53, 3.68, 2.54, "Linie unten");
-s.addNotes(
-`[ca. 30 Sek.]
-Mein Teil ist das Motiv der Vater-Sohn-Beziehung.
-Man kann „Die Verwandlung“ nicht nur als Geschichte über einen Mann lesen, der zum Käfer wird, sondern auch als Machtkampf zwischen Vater und Sohn. Ich konzentriere mich auf vier Stationen: die Ausgangslage, die erste Begegnung, den Apfelwurf und Gregors Tod. Zum Schluss ziehe ich ein Fazit.
-
-HINWEIS: Rot geschriebene Zitate im Zitatkasten = im Vortrag vorlesen (eins pro Folie). Die anderen stehen als Beleg auf der Folie, müssen aber nicht gesagt werden.`);
+s.addNotes(nextNote());
 
 // ===== Folie 2: Ausgangslage =====
 s = content("Ausgangslage: Der Sohn als Ernährer");
@@ -155,12 +154,7 @@ quotes(s, [
   { t: "„daß trotz allen Unglücks ein allerdings ganz kleines Vermögen aus der alten Zeit noch vorhanden war“", ref: "Buch" },
   { t: "„Gregor, hinter seiner Türe, nickte eifrig, erfreut über diese unerwartete Vorsicht und Sparsamkeit.“", ref: "Buch" },
 ]);
-s.addNotes(
-`[ca. 1 Min.]
-Schon vor der Verwandlung ist die Familie auf den Kopf gestellt. Das Geschäft des Vaters ist vor fünf Jahren zusammengebrochen. Seitdem ist Gregor der Ernährer: Er arbeitet als Handlungsreisender und zahlt die Schulden seines Vaters bei seinem Chef ab.
-Gleich am Anfang denkt er, dass er längst gekündigt hätte, wenn er sich nicht wegen seiner Eltern zurückhalten würde. Er opfert sich also für die Eltern.
-Aber Dank bekommt er dafür nicht. Im zweiten Teil heißt es: ROT VORLESEN → „man nahm das Geld dankbar an, er lieferte es gern ab, aber eine besondere Wärme wollte sich nicht mehr ergeben.“ Gregor ist für die Familie nur noch der, der das Geld bringt.
-Später erfährt Gregor, dass der Vater heimlich ein kleines Vermögen behalten hatte. Statt wütend zu sein, nickt er nur „eifrig“. Er kritisiert den Vater nie, nicht einmal in Gedanken.`);
+s.addNotes(nextNote());
 
 // ===== Folie 3: Erste Konfrontation =====
 s = content("Teil I: Der Vater als Gegner");
@@ -176,13 +170,7 @@ quotes(s, [
   { t: "„Unerbittlich drängte der Vater und stieß Zischlaute aus, wie ein Wilder.“", ref: "Buch", hi: true },
   { t: "„da gab ihm der Vater von hinten einen jetzt wahrhaftig erlösenden starken Stoß, und er flog, heftig blutend, weit in sein Zimmer hinein.“", ref: "Buch" },
 ]);
-s.addNotes(
-`[ca. 1 Min. 15 Sek.]
-Schon als Gregor nicht aufsteht, klopft der Vater „schwach, aber schon mit der Faust“.
-Als er Gregor dann sieht, ballt er „mit feindseligem Ausdruck die Faust“ – und weint im nächsten Moment.
-Der Vater ist gleichzeitig feindselig und verzweifelt – er zeigt seine Überforderung durch Aggression.
-Mit Stock und Zeitung treibt er Gregor zurück ins Zimmer. ROT VORLESEN → „Unerbittlich drängte der Vater und stieß Zischlaute aus, wie ein Wilder.“ Der Vater wird hier selbst wie ein Tier beschrieben, nicht Gregor.
-Den Stoß, nach dem Gregor „heftig blutend“ ins Zimmer fliegt, empfindet er sogar als „erlösend“ – so sehr hat er gelernt, sich zu unterwerfen.`);
+s.addNotes(nextNote());
 
 // ===== Folie 4: Verwandlung des Vaters =====
 s = content("Teil II: Die Verwandlung des Vaters");
@@ -197,12 +185,7 @@ quotes(s, [
   { t: "„Gregor staunte über die Riesengröße seiner Stiefelsohlen.“", ref: "Buch" },
   { t: "„Mit einer Art Eigensinn weigerte sich der Vater, auch zu Hause seine Dieneruniform abzulegen“", ref: "Buch" },
 ]);
-s.addNotes(
-`[ca. 1 Min. 15 Sek.]
-Im zweiten Teil verwandelt sich auch der Vater. Gregor fragt sich: „war das noch der Vater?“ Früher lag dieser Mann müde im Bett und empfing Gregor abends im Schlafrock.
-Und jetzt? ROT VORLESEN → „Nun aber war er recht gut aufgerichtet; in eine straffe blaue Uniform mit Goldknöpfen gekleidet, wie sie Diener der Bankinstitute tragen.“
-Schlafrock gegen Uniform, liegen gegen aufrecht stehen. Gregor am Boden „staunte über die Riesengröße seiner Stiefelsohlen“.
-Wie bei einer Wippe: Je schwächer Gregor, desto stärker der Vater. Ironisch ist: Es ist eine Dieneruniform – draußen ist er Diener, zu Hause Herrscher.`);
+s.addNotes(nextNote());
 
 // ===== Folie 5: Apfelwurf =====
 s = content("Teil II: Der Apfelwurf");
@@ -218,13 +201,7 @@ quotes(s, [
   { t: "„der Apfel blieb, da ihn niemand zu entfernen wagte, als sichtbares Andenken im Fleische sitzen“", ref: "Buch" },
   { t: "„Den verfaulten Apfel in seinem Rücken und die entzündete Umgebung […] spürte er schon kaum.“", ref: "Buch" },
 ]);
-s.addNotes(
-`[ca. 1 Min. 15 Sek.]
-Der Höhepunkt der Gewalt ist der Apfelwurf. Der Vater denkt sofort das Schlimmste: „Ich habe es ja erwartet.“ Er fragt nicht nach.
-Dann heißt es: ROT VORLESEN → „der Vater hatte sich entschlossen, ihn zu bombardieren.“ Das Wort „entschlossen“ ist wichtig: Es ist kein Reflex, sondern eine Entscheidung.
-Ein Apfel dringt dabei in Gregors Rücken ein.
-Und er bleibt dort stecken, weil niemand ihn zu entfernen wagt. Der Apfel verfault und schwächt Gregor bis zum Tod.
-Der Apfel erinnert an den Sündenfall – Schuld und Strafe. Der Vater bestraft den Sohn für eine Schuld, die er nicht hat, und ist damit am Tod mitschuldig.`);
+s.addNotes(nextNote());
 
 // ===== Folie 6: Urteil und Tod =====
 s = content("Teil III: Das Urteil");
@@ -240,11 +217,7 @@ quotes(s, [
   { t: "„»Nun,« sagte Herr Samsa, »jetzt können wir Gott danken.«“", ref: "Buch", hi: true },
   { t: "„»Verlassen Sie sofort meine Wohnung!« sagte Herr Samsa“", ref: "Buch" },
 ]);
-s.addNotes(
-`[ca. 1 Min. 15 Sek.]
-Im dritten Teil fällt das Urteil. Nach dem Geigenabend sagt die Schwester: „wir müssen versuchen, es loszuwerden.“ Und der Vater sagt nur: „Sie hat tausendmal Recht.“ Für ihn ist Gregor nur noch „es“.
-Und Gregor wehrt sich nicht. In seiner letzten Nacht denkt er „mit Rührung und Liebe“ an seine Familie und ist selbst überzeugt, dass er verschwinden muss. Gregor übernimmt das Urteil über sich selbst – völlige Unterwerfung.
-Als Gregor tot ist, sagt der Vater: ROT VORLESEN → „Nun, jetzt können wir Gott danken.“ Kein Wort der Trauer. Danach wirft er die Zimmerherren hinaus: „Verlassen Sie sofort meine Wohnung!“ Der Vater ist wieder das Oberhaupt der Familie.`);
+s.addNotes(nextNote());
 
 // ===== Folie 7: Fazit =====
 s = content("Fazit");
@@ -261,19 +234,13 @@ s.addShape(pres.shapes.RECTANGLE, { x: QX, y: 3.4, w: QW, h: 0.95, objectName: "
 txt(s, "Die Verwandlung zeigt, wie ein Sohn an der Härte und fehlenden Anerkennung seines Vaters zerbricht.", {
   x: QX + 0.2, y: 3.4, w: QW - 0.4, h: 0.95, valign: "middle", fontSize: 15, color: C.text1, objectName: "Kernaussage",
 });
-s.addNotes(
-`[ca. 1 Min.]
-Zum Schluss mein Fazit in drei Punkten.
-Erstens: Gregor opfert sich für seine Familie und trägt sogar die Schulden des Vaters. Anerkennung bekommt er dafür nicht, er ist nur noch der, der das Geld bringt.
-Zweitens: Mit jeder Konfrontation wird der Vater stärker und gewalttätiger, während Gregor immer schwächer wird – bis zur tödlichen Wunde durch den Apfel.
-Drittens: Gregor ist für die Familie nur noch eine Pflicht. Im Text heißt es, man müsse „den Widerwillen hinunterzuschlucken und zu dulden, nichts als zu dulden“. Und ganz am Ende, nach Gregors Tod, sagt der Vater: ROT VORLESEN → „Also kommt doch her. Laßt schon endlich die alten Sachen. Und nehmt auch ein wenig Rücksicht auf mich.“ Der Sohn ist vergessen, und der Vater stellt sich selbst wieder in den Mittelpunkt.
-Die Vater-Sohn-Beziehung zeigt also, wie ein Sohn an der Härte und fehlenden Anerkennung seines Vaters zerbricht. Vielen Dank!`);
+s.addNotes(nextNote());
 
 // ===== Folie 8: Quellen (wird selbst ausgefüllt) =====
 s = pres.addSlide({ masterName: "Quellen", sectionTitle: SEC });
 s.addText("Quellen", { placeholder: "title" });
 s.addText("", { placeholder: "quellen" });
-s.addNotes("Quellen bitte selbst eintragen. Tipp: Die Angaben (S., Z.) beziehen sich auf die zeilennummerierte Textgrundlage (Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf) – Text der Erstausgabe 1915 nach Projekt Gutenberg, E-Book Nr. 22367.");
+s.addNotes(nextNote());
 
 (async () => {
   await pres.writeFile({ fileName: OUT });
