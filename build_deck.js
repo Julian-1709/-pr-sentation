@@ -51,6 +51,18 @@ pres.defineSlideMaster({
   ],
 });
 
+// Quellenfolie: wie "Inhalt", aber mit leerem Textfeld zum Ausfüllen
+pres.defineSlideMaster({
+  title: "Quellen",
+  background: BG,
+  slideNumber: { x: 9.0, y: 5.2, w: 0.5, h: 0.25, fontSize: 9, color: MUTED, align: "right" },
+  objects: [
+    { text: { text: "Julian Sickinger", options: { x: 0.5, y: 5.2, w: 6, h: 0.25, fontSize: 9, color: MUTED, margin: 0 } } },
+    { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.4, w: 8.8, h: 0.65, align: "left", fontSize: 28, bold: true, color: C.text1, margin: 0 }, text: "" } },
+    { placeholder: { options: { name: "quellen", type: "body", x: 0.6, y: 1.3, w: 8.8, h: 3.7, align: "left", valign: "top", fontSize: 14, color: C.text1, margin: 0 }, text: "Quellen hier eintragen" } },
+  ],
+});
+
 // ---------- Helfer ----------
 const txt = (s, text, o) => s.addText(text, { isTextBox: true, color: C.text1, fontSize: 14, valign: "top", ...o });
 const rule = (s, x, y, w, name) => s.addShape(pres.shapes.LINE, { x, y, w, h: 0, line: { color: C.text1, width: 0.75 }, objectName: name });
@@ -245,9 +257,9 @@ quotes(s, [
   { t: "„dem gegenüber es das Gebot der Familienpflicht war, den Widerwillen hinunterzuschlucken und zu dulden, nichts als zu dulden.“", ref: "Buch" },
   { t: "„»Also kommt doch her. Laßt schon endlich die alten Sachen. Und nehmt auch ein wenig Rücksicht auf mich.«“", ref: "Buch", hi: true },
 ]);
-s.addShape(pres.shapes.RECTANGLE, { x: QX, y: 3.55, w: QW, h: 1.3, objectName: "Kernaussage Kasten", fill: { color: C.accent1, transparency: 0 }, line: { type: "none" } });
+s.addShape(pres.shapes.RECTANGLE, { x: QX, y: 3.4, w: QW, h: 0.95, objectName: "Kernaussage Kasten", fill: { color: C.background1, transparency: 35 }, line: { color: C.accent2, width: 0.75 } });
 txt(s, "Die Verwandlung zeigt, wie ein Sohn an der Härte und fehlenden Anerkennung seines Vaters zerbricht.", {
-  x: QX + 0.2, y: 3.55, w: QW - 0.4, h: 1.3, valign: "middle", fontSize: 16, bold: true, italic: true, color: C.background2, objectName: "Kernaussage",
+  x: QX + 0.2, y: 3.4, w: QW - 0.4, h: 0.95, valign: "middle", fontSize: 15, color: C.text1, objectName: "Kernaussage",
 });
 s.addNotes(
 `[ca. 1 Min.]
@@ -258,7 +270,9 @@ Drittens: Gregor ist für die Familie nur noch eine Pflicht. Im Text heißt es, 
 Die Vater-Sohn-Beziehung zeigt also, wie ein Sohn an der Härte und fehlenden Anerkennung seines Vaters zerbricht. Vielen Dank!`);
 
 // ===== Folie 8: Quellen (wird selbst ausgefüllt) =====
-s = content("Quellen");
+s = pres.addSlide({ masterName: "Quellen", sectionTitle: SEC });
+s.addText("Quellen", { placeholder: "title" });
+s.addText("", { placeholder: "quellen" });
 s.addNotes("Quellen bitte selbst eintragen. Tipp: Die Angaben (S., Z.) beziehen sich auf die zeilennummerierte Textgrundlage (Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf) – Text der Erstausgabe 1915 nach Projekt Gutenberg, E-Book Nr. 22367.");
 
 (async () => {
