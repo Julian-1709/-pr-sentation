@@ -50,7 +50,6 @@ pres.defineSlideMaster({
   background: BG,
   slideNumber: { x: 9.0, y: 5.2, w: 0.5, h: 0.25, fontSize: 9, color: MUTED, align: "right" },
   objects: [
-    { text: { text: "Julian Sickinger", options: { x: 0.5, y: 5.2, w: 6, h: 0.25, fontSize: 9, color: MUTED, margin: 0 } } },
     { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.4, w: 8.8, h: 0.65, align: "left", fontSize: 28, bold: true, color: C.text1, margin: 0 }, text: "" } },
   ],
 });
@@ -61,7 +60,6 @@ pres.defineSlideMaster({
   background: BG,
   slideNumber: { x: 9.0, y: 5.2, w: 0.5, h: 0.25, fontSize: 9, color: MUTED, align: "right" },
   objects: [
-    { text: { text: "Julian Sickinger", options: { x: 0.5, y: 5.2, w: 6, h: 0.25, fontSize: 9, color: MUTED, margin: 0 } } },
     { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.4, w: 8.8, h: 0.65, align: "left", fontSize: 28, bold: true, color: C.text1, margin: 0 }, text: "" } },
     { placeholder: { options: { name: "quellen", type: "body", x: 0.6, y: 1.3, w: 8.8, h: 3.7, align: "left", valign: "top", fontSize: 14, color: C.text1, margin: 0 }, text: "Quellen hier eintragen" } },
   ],
@@ -123,9 +121,12 @@ function quotes(s, list, y0 = 1.25) {
   return y0 + total(fs);
 }
 let nContent = 0;
+// Name als normales Textfeld auf der Folie (nicht im Master), damit man ihn auch auf dem iPhone ändern kann
+const footer = (s) => s.addText("Julian Sickinger", { isTextBox: true, x: 0.5, y: 5.2, w: 3, h: 0.25, fontSize: 9, color: MUTED, margin: 0, objectName: "Name" });
 const content = (title) => {
   const s = pres.addSlide({ masterName: "Inhalt", sectionTitle: SEC });
   s.addText(title, { placeholder: "title" });
+  footer(s);
   return s;
 };
 const SEC = "Vater-Sohn-Beziehung";
@@ -240,6 +241,7 @@ s.addNotes(nextNote());
 s = pres.addSlide({ masterName: "Quellen", sectionTitle: SEC });
 s.addText("Quellen", { placeholder: "title" });
 s.addText("", { placeholder: "quellen" });
+footer(s);
 s.addNotes(nextNote());
 
 (async () => {
