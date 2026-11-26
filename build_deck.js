@@ -46,9 +46,8 @@ pres.defineSlideMaster({
   background: BG,
   slideNumber: { x: 9.0, y: 5.2, w: 0.5, h: 0.25, fontSize: 9, color: MUTED, align: "right" },
   objects: [
-    { text: { text: "Franz Kafka: Die Verwandlung – Motiv: Vater-Sohn-Beziehung", options: { x: 0.5, y: 5.2, w: 6, h: 0.25, fontSize: 9, color: MUTED, margin: 0 } } },
-    { placeholder: { options: { name: "kicker", type: "body", x: 0.6, y: 0.28, w: 8.8, h: 0.25, align: "left", fontSize: 9, bold: true, color: MUTED, charSpacing: 2, margin: 0 }, text: "" } },
-    { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.55, w: 8.8, h: 0.6, align: "left", fontSize: 28, bold: true, color: C.text1, margin: 0 }, text: "" } },
+    { text: { text: "Julian Sickinger", options: { x: 0.5, y: 5.2, w: 6, h: 0.25, fontSize: 9, color: MUTED, margin: 0 } } },
+    { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.4, w: 8.8, h: 0.65, align: "left", fontSize: 28, bold: true, color: C.text1, margin: 0 }, text: "" } },
   ],
 });
 
@@ -79,35 +78,37 @@ function points(s, items, y0 = 1.3) {
 // Rechte Spalte: Zitate aus dem Buch. hi = wichtig (rot hinterlegt)
 const QX = 5.2, QW = 4.25, QBOTTOM = 5.08;
 function quotes(s, list, y0 = 1.25) {
+  // Ein gemeinsamer Kasten für alle Zitate; wichtige (hi) Zitate in Rot.
   list = list.map((q) => ({ ...q, ref: q.ref === "Buch" ? zref(q.t) : q.ref }));
-  // größte Schrift wählen (12,5 → 11 pt), bei der alle Zitate in die Spalte passen
   const nb = (r) => "\u00A0(" + r.replace(/ /g, "\u00A0") + ")";
-  const height = (t, ref, fs) => lines(t + nb(ref), 62 * 11 / fs) * 0.19 * fs / 11 + 0.27;
+  const PAD = 0.14, GAP = 0.16;
+  const height = (t, ref, fs) => lines(t + nb(ref), 64 * 11 / fs) * 0.19 * fs / 11 + 0.08;
+  const total = (fs) => list.reduce((sum, q) => sum + height(q.t, q.ref, fs), 0) + GAP * (list.length - 1) + 2 * PAD;
   let fs = 12.5;
-  while (fs > 10.5 && list.reduce((sum, q) => sum + height(q.t, q.ref, fs) + 0.09, y0) - 0.09 > QBOTTOM) fs -= 0.5;
-  let y = y0;
+  while (fs > 10.5 && y0 + total(fs) > QBOTTOM) fs -= 0.5;
+  s.addShape(pres.shapes.RECTANGLE, {
+    x: QX, y: y0, w: QW, h: total(fs), objectName: "Zitatkasten",
+    fill: { color: C.background1, transparency: 35 }, line: { color: C.accent2, width: 0.75 },
+  });
+  let y = y0 + PAD;
   list.forEach(({ t, ref, hi }, i) => {
     const h = height(t, ref, fs);
-    s.addShape(pres.shapes.RECTANGLE, {
-      x: QX, y, w: QW, h, objectName: `${hi ? "Wichtiges " : ""}Zitat ${i + 1}`,
-      fill: hi ? { color: C.accent1, transparency: 0 } : { color: C.background1, transparency: 40 },
-      line: hi ? { type: "none" } : { color: C.accent2, width: 0.5 },
-    });
+    if (i > 0) s.addShape(pres.shapes.LINE, { x: QX + 0.2, y: y - GAP / 2, w: QW - 0.4, h: 0, line: { color: C.accent4, width: 0.5 }, objectName: `Trennlinie ${i}` });
     s.addText([
-      { text: t, options: { italic: true } },
+      { text: t, options: { italic: true, bold: !!hi } },
       { text: nb(ref), options: { fontSize: fs - 1.5, italic: false, bold: true } },
     ], {
-      isTextBox: true, x: QX + 0.1, y: y + 0.02, w: QW - 0.2, h: h - 0.04, valign: "middle", margin: 2,
-      fontSize: fs, fontFace: THEME.bodyFontFace, color: hi ? C.background2 : C.text1, objectName: `Zitattext ${i + 1}`,
+      isTextBox: true, x: QX + 0.15, y, w: QW - 0.3, h, valign: "middle", margin: 0,
+      fontSize: fs, fontFace: THEME.bodyFontFace, color: hi ? C.accent1 : C.text1, objectName: `${hi ? "Wichtiges " : ""}Zitat ${i + 1}`,
     });
-    y += h + 0.09;
+    y += h + GAP;
   });
-  if (y - 0.09 > QBOTTOM) console.warn("WARNUNG: Zitate zu hoch", (y - 0.09).toFixed(2));
+  if (y0 + total(fs) > QBOTTOM) console.warn("WARNUNG: Zitatkasten zu hoch", (y0 + total(fs)).toFixed(2));
+  return y0 + total(fs);
 }
 let nContent = 0;
 const content = (title) => {
   const s = pres.addSlide({ masterName: "Inhalt", sectionTitle: SEC });
-  s.addText(`MOTIV: VATER-SOHN-BEZIEHUNG · FOLIE ${++nContent} VON 7`, { placeholder: "kicker" });
   s.addText(title, { placeholder: "title" });
   return s;
 };
@@ -126,7 +127,7 @@ s.addNotes(
 Mein Teil ist das Motiv der Vater-Sohn-Beziehung.
 Man kann „Die Verwandlung“ nicht nur als Geschichte über einen Mann lesen, der zum Käfer wird, sondern auch als Machtkampf zwischen Vater und Sohn. Ich konzentriere mich auf vier Stationen: die Ausgangslage, die erste Begegnung, den Apfelwurf und Gregors Tod. Zum Schluss ziehe ich ein Fazit.
 
-HINWEIS: Rot hinterlegte Zitate auf den Folien = im Vortrag vorlesen. Die anderen stehen als Beleg auf der Folie, müssen aber nicht gesagt werden.`);
+HINWEIS: Rot geschriebene Zitate im Zitatkasten = im Vortrag vorlesen (eins pro Folie). Die anderen stehen als Beleg auf der Folie, müssen aber nicht gesagt werden.`);
 
 // ===== Folie 2: Ausgangslage =====
 s = content("Ausgangslage: Der Sohn als Ernährer");
@@ -136,7 +137,7 @@ points(s, [
   ["Der Vater verschweigt Geld", "Heimlich hat der Vater ein kleines Vermögen behalten. Gregor hätte früher kündigen können – und freut sich trotzdem.", { anchor: "daß trotz allen Unglücks ein allerdings ganz kleines Vermögen aus der alten Zeit noch vorhanden war" }],
 ]);
 quotes(s, [
-  { t: "„Wenn ich mich nicht wegen meiner Eltern zurückhielte, ich hätte längst gekündigt“", ref: "Buch", hi: true },
+  { t: "„Wenn ich mich nicht wegen meiner Eltern zurückhielte, ich hätte längst gekündigt“", ref: "Buch" },
   { t: "„habe ich einmal das Geld beisammen, um die Schuld der Eltern an ihn abzuzahlen – es dürfte noch fünf bis sechs Jahre dauern –, mache ich die Sache unbedingt.“", ref: "Buch" },
   { t: "„man nahm das Geld dankbar an, er lieferte es gern ab, aber eine besondere Wärme wollte sich nicht mehr ergeben.“", ref: "Buch", hi: true },
   { t: "„daß trotz allen Unglücks ein allerdings ganz kleines Vermögen aus der alten Zeit noch vorhanden war“", ref: "Buch" },
@@ -145,7 +146,7 @@ quotes(s, [
 s.addNotes(
 `[ca. 1 Min.]
 Schon vor der Verwandlung ist die Familie auf den Kopf gestellt. Das Geschäft des Vaters ist vor fünf Jahren zusammengebrochen. Seitdem ist Gregor der Ernährer: Er arbeitet als Handlungsreisender und zahlt die Schulden seines Vaters bei seinem Chef ab.
-Gleich am Anfang denkt er: ROT VORLESEN → „Wenn ich mich nicht wegen meiner Eltern zurückhielte, ich hätte längst gekündigt.“ Er opfert sich für die Eltern.
+Gleich am Anfang denkt er, dass er längst gekündigt hätte, wenn er sich nicht wegen seiner Eltern zurückhalten würde. Er opfert sich also für die Eltern.
 Aber Dank bekommt er dafür nicht. Im zweiten Teil heißt es: ROT VORLESEN → „man nahm das Geld dankbar an, er lieferte es gern ab, aber eine besondere Wärme wollte sich nicht mehr ergeben.“ Gregor ist für die Familie nur noch der, der das Geld bringt.
 Später erfährt Gregor, dass der Vater heimlich ein kleines Vermögen behalten hatte. Statt wütend zu sein, nickt er nur „eifrig“. Er kritisiert den Vater nie, nicht einmal in Gedanken.`);
 
@@ -158,7 +159,7 @@ points(s, [
 ]);
 quotes(s, [
   { t: "„schon klopfte an der einen Seitentür der Vater, schwach, aber schon mit der Faust.“", ref: "Buch" },
-  { t: "„Der Vater ballte mit feindseligem Ausdruck die Faust, als wolle er Gregor in sein Zimmer zurückstoßen, […] und weinte, daß sich seine mächtige Brust schüttelte.“", ref: "Buch", hi: true },
+  { t: "„Der Vater ballte mit feindseligem Ausdruck die Faust, als wolle er Gregor in sein Zimmer zurückstoßen, […] und weinte, daß sich seine mächtige Brust schüttelte.“", ref: "Buch" },
   { t: "„packte er mit der Rechten den Stock des Prokuristen […], holte mit der Linken eine große Zeitung vom Tisch“", ref: "Buch" },
   { t: "„Unerbittlich drängte der Vater und stieß Zischlaute aus, wie ein Wilder.“", ref: "Buch", hi: true },
   { t: "„da gab ihm der Vater von hinten einen jetzt wahrhaftig erlösenden starken Stoß, und er flog, heftig blutend, weit in sein Zimmer hinein.“", ref: "Buch" },
@@ -166,7 +167,7 @@ quotes(s, [
 s.addNotes(
 `[ca. 1 Min. 15 Sek.]
 Schon als Gregor nicht aufsteht, klopft der Vater „schwach, aber schon mit der Faust“.
-Als er Gregor dann sieht, reagiert er so: ROT VORLESEN → „Der Vater ballte mit feindseligem Ausdruck die Faust, als wolle er Gregor in sein Zimmer zurückstoßen, sah sich dann unsicher im Wohnzimmer um, beschattete dann mit den Händen die Augen und weinte, daß sich seine mächtige Brust schüttelte.“
+Als er Gregor dann sieht, ballt er „mit feindseligem Ausdruck die Faust“ – und weint im nächsten Moment.
 Der Vater ist gleichzeitig feindselig und verzweifelt – er zeigt seine Überforderung durch Aggression.
 Mit Stock und Zeitung treibt er Gregor zurück ins Zimmer. ROT VORLESEN → „Unerbittlich drängte der Vater und stieß Zischlaute aus, wie ein Wilder.“ Der Vater wird hier selbst wie ein Tier beschrieben, nicht Gregor.
 Den Stoß, nach dem Gregor „heftig blutend“ ins Zimmer fliegt, empfindet er sogar als „erlösend“ – so sehr hat er gelernt, sich zu unterwerfen.`);
@@ -179,14 +180,14 @@ points(s, [
   ["Macht als Wippe", "Je schwächer Gregor wird, desto stärker wird der Vater. Er legt die Uniform nicht einmal zu Hause ab.", { anchor: "Mit einer Art Eigensinn weigerte sich der Vater, auch zu Hause seine Dieneruniform abzulegen" }],
 ]);
 quotes(s, [
-  { t: "„war das noch der Vater? Der gleiche Mann, der müde im Bett vergraben lag, wenn früher Gregor zu einer Geschäftsreise ausgerückt war; der ihn an Abenden der Heimkehr im Schlafrock im Lehnstuhl empfangen hatte“", ref: "Buch", hi: true },
+  { t: "„war das noch der Vater? Der gleiche Mann, der müde im Bett vergraben lag, wenn früher Gregor zu einer Geschäftsreise ausgerückt war; der ihn an Abenden der Heimkehr im Schlafrock im Lehnstuhl empfangen hatte“", ref: "Buch" },
   { t: "„Nun aber war er recht gut aufgerichtet; in eine straffe blaue Uniform mit Goldknöpfen gekleidet, wie sie Diener der Bankinstitute tragen“", ref: "Buch", hi: true },
   { t: "„Gregor staunte über die Riesengröße seiner Stiefelsohlen.“", ref: "Buch" },
   { t: "„Mit einer Art Eigensinn weigerte sich der Vater, auch zu Hause seine Dieneruniform abzulegen“", ref: "Buch" },
 ]);
 s.addNotes(
 `[ca. 1 Min. 15 Sek.]
-Im zweiten Teil verwandelt sich auch der Vater. ROT VORLESEN → „war das noch der Vater? Der gleiche Mann, der müde im Bett vergraben lag, wenn früher Gregor zu einer Geschäftsreise ausgerückt war; der ihn an Abenden der Heimkehr im Schlafrock im Lehnstuhl empfangen hatte.“
+Im zweiten Teil verwandelt sich auch der Vater. Gregor fragt sich: „war das noch der Vater?“ Früher lag dieser Mann müde im Bett und empfing Gregor abends im Schlafrock.
 Und jetzt? ROT VORLESEN → „Nun aber war er recht gut aufgerichtet; in eine straffe blaue Uniform mit Goldknöpfen gekleidet, wie sie Diener der Bankinstitute tragen.“
 Schlafrock gegen Uniform, liegen gegen aufrecht stehen. Gregor am Boden „staunte über die Riesengröße seiner Stiefelsohlen“.
 Wie bei einer Wippe: Je schwächer Gregor, desto stärker der Vater. Ironisch ist: Es ist eine Dieneruniform – draußen ist er Diener, zu Hause Herrscher.`);
@@ -201,16 +202,16 @@ points(s, [
 quotes(s, [
   { t: "„»Ich habe es ja erwartet«, sagte der Vater, »ich habe es euch ja immer gesagt, aber ihr Frauen wollt nicht hören.«“", ref: "Buch" },
   { t: "„der Vater hatte sich entschlossen, ihn zu bombardieren.“", ref: "Buch", hi: true },
-  { t: "„Ein ihm sofort nachfliegender drang dagegen förmlich in Gregors Rücken ein“", ref: "Buch", hi: true },
-  { t: "„der Apfel blieb, da ihn niemand zu entfernen wagte, als sichtbares Andenken im Fleische sitzen“", ref: "Buch", hi: true },
+  { t: "„Ein ihm sofort nachfliegender drang dagegen förmlich in Gregors Rücken ein“", ref: "Buch" },
+  { t: "„der Apfel blieb, da ihn niemand zu entfernen wagte, als sichtbares Andenken im Fleische sitzen“", ref: "Buch" },
   { t: "„Den verfaulten Apfel in seinem Rücken und die entzündete Umgebung […] spürte er schon kaum.“", ref: "Buch" },
 ]);
 s.addNotes(
 `[ca. 1 Min. 15 Sek.]
 Der Höhepunkt der Gewalt ist der Apfelwurf. Der Vater denkt sofort das Schlimmste: „Ich habe es ja erwartet.“ Er fragt nicht nach.
 Dann heißt es: ROT VORLESEN → „der Vater hatte sich entschlossen, ihn zu bombardieren.“ Das Wort „entschlossen“ ist wichtig: Es ist kein Reflex, sondern eine Entscheidung.
-ROT VORLESEN → „Ein ihm sofort nachfliegender drang dagegen förmlich in Gregors Rücken ein.“
-Und dieser Apfel bleibt dort. ROT VORLESEN → „der Apfel blieb, da ihn niemand zu entfernen wagte, als sichtbares Andenken im Fleische sitzen.“ Der Apfel verfault und schwächt Gregor bis zum Tod.
+Ein Apfel dringt dabei in Gregors Rücken ein.
+Und er bleibt dort stecken, weil niemand ihn zu entfernen wagt. Der Apfel verfault und schwächt Gregor bis zum Tod.
 Der Apfel erinnert an den Sündenfall – Schuld und Strafe. Der Vater bestraft den Sohn für eine Schuld, die er nicht hat, und ist damit am Tod mitschuldig.`);
 
 // ===== Folie 6: Urteil und Tod =====
@@ -221,16 +222,16 @@ points(s, [
   ["Erleichterung", "Nach Gregors Tod dankt der Vater Gott, wirft die Zimmerherren hinaus und ist wieder Herr im Haus.", { anchor: "»Verlassen Sie sofort meine Wohnung!« sagte Herr Samsa" }],
 ]);
 quotes(s, [
-  { t: "„wir müssen versuchen, es loszuwerden.“ – „»Sie hat tausendmal Recht,« sagte der Vater für sich.“", ref: "Buch", hi: true },
+  { t: "„wir müssen versuchen, es loszuwerden.“ – „»Sie hat tausendmal Recht,« sagte der Vater für sich.“", ref: "Buch" },
   { t: "„»Wenn er uns verstünde,« sagte der Vater halb fragend“", ref: "Buch" },
-  { t: "„An seine Familie dachte er mit Rührung und Liebe zurück. Seine Meinung darüber, daß er verschwinden müsse, war womöglich noch entschiedener, als die seiner Schwester.“", ref: "Buch", hi: true },
+  { t: "„An seine Familie dachte er mit Rührung und Liebe zurück. Seine Meinung darüber, daß er verschwinden müsse, war womöglich noch entschiedener, als die seiner Schwester.“", ref: "Buch" },
   { t: "„»Nun,« sagte Herr Samsa, »jetzt können wir Gott danken.«“", ref: "Buch", hi: true },
   { t: "„»Verlassen Sie sofort meine Wohnung!« sagte Herr Samsa“", ref: "Buch" },
 ]);
 s.addNotes(
 `[ca. 1 Min. 15 Sek.]
-Im dritten Teil fällt das Urteil. Nach dem Geigenabend sagt die Schwester: „wir müssen versuchen, es loszuwerden.“ Und der Vater? ROT VORLESEN → „Sie hat tausendmal Recht, sagte der Vater für sich.“ Für ihn ist Gregor nur noch „es“.
-Und Gregor wehrt sich nicht. In seiner letzten Nacht heißt es: ROT VORLESEN → „An seine Familie dachte er mit Rührung und Liebe zurück. Seine Meinung darüber, daß er verschwinden müsse, war womöglich noch entschiedener, als die seiner Schwester.“ Gregor übernimmt das Urteil über sich selbst – völlige Unterwerfung.
+Im dritten Teil fällt das Urteil. Nach dem Geigenabend sagt die Schwester: „wir müssen versuchen, es loszuwerden.“ Und der Vater sagt nur: „Sie hat tausendmal Recht.“ Für ihn ist Gregor nur noch „es“.
+Und Gregor wehrt sich nicht. In seiner letzten Nacht denkt er „mit Rührung und Liebe“ an seine Familie und ist selbst überzeugt, dass er verschwinden muss. Gregor übernimmt das Urteil über sich selbst – völlige Unterwerfung.
 Als Gregor tot ist, sagt der Vater: ROT VORLESEN → „Nun, jetzt können wir Gott danken.“ Kein Wort der Trauer. Danach wirft er die Zimmerherren hinaus: „Verlassen Sie sofort meine Wohnung!“ Der Vater ist wieder das Oberhaupt der Familie.`);
 
 // ===== Folie 7: Fazit =====

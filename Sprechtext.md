@@ -1,8 +1,8 @@
 # Sprechtext – Motiv: Vater-Sohn-Beziehung
 
-Dauer ca. 6–7 Minuten. **ROT VORLESEN →** markiert die Zitate, die auf der Folie rot hinterlegt sind. Die übrigen Zitate stehen als Beleg auf der Folie.
+Dauer ca. 6–7 Minuten. **ROT VORLESEN →** markiert das eine rot geschriebene Zitat pro Folie. Die übrigen Zitate stehen als Beleg im Zitatkasten.
 
-Die Angaben (S. …, Z. …) beziehen sich auf `Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf` (Text der Erstausgabe 1915, alte Rechtschreibung „daß“, Zeilen pro Seite gezählt).
+Die Angaben (S. …, Z. …) beziehen sich auf `Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf` (Text der Erstausgabe 1915, Zeilen pro Seite gezählt).
 
 ## Folie 1: 
 
@@ -14,7 +14,7 @@ Man kann „Die Verwandlung“ nicht nur als Geschichte über einen Mann lesen, 
 
 
 
-HINWEIS: Rot hinterlegte Zitate auf den Folien = im Vortrag vorlesen. Die anderen stehen als Beleg auf der Folie, müssen aber nicht gesagt werden.
+HINWEIS: Rot geschriebene Zitate im Zitatkasten = im Vortrag vorlesen (eins pro Folie). Die anderen stehen als Beleg auf der Folie, müssen aber nicht gesagt werden.
 
 ## Folie 2: 
 
@@ -22,7 +22,7 @@ HINWEIS: Rot hinterlegte Zitate auf den Folien = im Vortrag vorlesen. Die andere
 
 Schon vor der Verwandlung ist die Familie auf den Kopf gestellt. Das Geschäft des Vaters ist vor fünf Jahren zusammengebrochen. Seitdem ist Gregor der Ernährer: Er arbeitet als Handlungsreisender und zahlt die Schulden seines Vaters bei seinem Chef ab.
 
-Gleich am Anfang denkt er: **ROT VORLESEN →** „Wenn ich mich nicht wegen meiner Eltern zurückhielte, ich hätte längst gekündigt.“ Er opfert sich für die Eltern.
+Gleich am Anfang denkt er, dass er längst gekündigt hätte, wenn er sich nicht wegen seiner Eltern zurückhalten würde. Er opfert sich also für die Eltern.
 
 Aber Dank bekommt er dafür nicht. Im zweiten Teil heißt es: **ROT VORLESEN →** „man nahm das Geld dankbar an, er lieferte es gern ab, aber eine besondere Wärme wollte sich nicht mehr ergeben.“ Gregor ist für die Familie nur noch der, der das Geld bringt.
 
@@ -34,7 +34,7 @@ Später erfährt Gregor, dass der Vater heimlich ein kleines Vermögen behalten 
 
 Schon als Gregor nicht aufsteht, klopft der Vater „schwach, aber schon mit der Faust“.
 
-Als er Gregor dann sieht, reagiert er so: **ROT VORLESEN →** „Der Vater ballte mit feindseligem Ausdruck die Faust, als wolle er Gregor in sein Zimmer zurückstoßen, sah sich dann unsicher im Wohnzimmer um, beschattete dann mit den Händen die Augen und weinte, daß sich seine mächtige Brust schüttelte.“
+Als er Gregor dann sieht, ballt er „mit feindseligem Ausdruck die Faust“ – und weint im nächsten Moment.
 
 Der Vater ist gleichzeitig feindselig und verzweifelt – er zeigt seine Überforderung durch Aggression.
 
@@ -46,7 +46,7 @@ Den Stoß, nach dem Gregor „heftig blutend“ ins Zimmer fliegt, empfindet er 
 
 [ca. 1 Min. 15 Sek.]
 
-Im zweiten Teil verwandelt sich auch der Vater. **ROT VORLESEN →** „war das noch der Vater? Der gleiche Mann, der müde im Bett vergraben lag, wenn früher Gregor zu einer Geschäftsreise ausgerückt war; der ihn an Abenden der Heimkehr im Schlafrock im Lehnstuhl empfangen hatte.“
+Im zweiten Teil verwandelt sich auch der Vater. Gregor fragt sich: „war das noch der Vater?“ Früher lag dieser Mann müde im Bett und empfing Gregor abends im Schlafrock.
 
 Und jetzt? **ROT VORLESEN →** „Nun aber war er recht gut aufgerichtet; in eine straffe blaue Uniform mit Goldknöpfen gekleidet, wie sie Diener der Bankinstitute tragen.“
 
@@ -62,9 +62,9 @@ Der Höhepunkt der Gewalt ist der Apfelwurf. Der Vater denkt sofort das Schlimms
 
 Dann heißt es: **ROT VORLESEN →** „der Vater hatte sich entschlossen, ihn zu bombardieren.“ Das Wort „entschlossen“ ist wichtig: Es ist kein Reflex, sondern eine Entscheidung.
 
-**ROT VORLESEN →** „Ein ihm sofort nachfliegender drang dagegen förmlich in Gregors Rücken ein.“
+Ein Apfel dringt dabei in Gregors Rücken ein.
 
-Und dieser Apfel bleibt dort. **ROT VORLESEN →** „der Apfel blieb, da ihn niemand zu entfernen wagte, als sichtbares Andenken im Fleische sitzen.“ Der Apfel verfault und schwächt Gregor bis zum Tod.
+Und er bleibt dort stecken, weil niemand ihn zu entfernen wagt. Der Apfel verfault und schwächt Gregor bis zum Tod.
 
 Der Apfel erinnert an den Sündenfall – Schuld und Strafe. Der Vater bestraft den Sohn für eine Schuld, die er nicht hat, und ist damit am Tod mitschuldig.
 
@@ -72,9 +72,9 @@ Der Apfel erinnert an den Sündenfall – Schuld und Strafe. Der Vater bestraft 
 
 [ca. 1 Min. 15 Sek.]
 
-Im dritten Teil fällt das Urteil. Nach dem Geigenabend sagt die Schwester: „wir müssen versuchen, es loszuwerden.“ Und der Vater? **ROT VORLESEN →** „Sie hat tausendmal Recht, sagte der Vater für sich.“ Für ihn ist Gregor nur noch „es“.
+Im dritten Teil fällt das Urteil. Nach dem Geigenabend sagt die Schwester: „wir müssen versuchen, es loszuwerden.“ Und der Vater sagt nur: „Sie hat tausendmal Recht.“ Für ihn ist Gregor nur noch „es“.
 
-Und Gregor wehrt sich nicht. In seiner letzten Nacht heißt es: **ROT VORLESEN →** „An seine Familie dachte er mit Rührung und Liebe zurück. Seine Meinung darüber, daß er verschwinden müsse, war womöglich noch entschiedener, als die seiner Schwester.“ Gregor übernimmt das Urteil über sich selbst – völlige Unterwerfung.
+Und Gregor wehrt sich nicht. In seiner letzten Nacht denkt er „mit Rührung und Liebe“ an seine Familie und ist selbst überzeugt, dass er verschwinden muss. Gregor übernimmt das Urteil über sich selbst – völlige Unterwerfung.
 
 Als Gregor tot ist, sagt der Vater: **ROT VORLESEN →** „Nun, jetzt können wir Gott danken.“ Kein Wort der Trauer. Danach wirft er die Zimmerherren hinaus: „Verlassen Sie sofort meine Wohnung!“ Der Vater ist wieder das Oberhaupt der Familie.
 
@@ -94,4 +94,4 @@ Die Vater-Sohn-Beziehung zeigt also, wie ein Sohn an der Härte und fehlenden An
 
 ## Folie 8: 
 
-Quellen bitte selbst eintragen. Tipp: Die Zeilenangaben (Z.) beziehen sich auf die zeilennummerierte Textgrundlage (Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf) – Text der Erstausgabe 1915 nach Projekt Gutenberg, E-Book Nr. 22367.
+Quellen bitte selbst eintragen. Tipp: Die Angaben (S., Z.) beziehen sich auf die zeilennummerierte Textgrundlage (Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf) – Text der Erstausgabe 1915 nach Projekt Gutenberg, E-Book Nr. 22367.
