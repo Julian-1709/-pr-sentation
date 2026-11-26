@@ -9,7 +9,7 @@ const OUT = path.join(__dirname, "Vater-Sohn-Beziehung.pptx");
 
 const THEME = {
   name: "Kafka Sepia",
-  headFontFace: "Georgia",
+  headFontFace: "Cambria",
   bodyFontFace: "Cambria",
   colors: {
     dk1: "1E1812", lt1: "FFFFFF", dk2: "4A3F33", lt2: "EDE5D3",
@@ -25,24 +25,26 @@ pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFac
 const C = pres.SchemeColor;
 
 // ---------- Layouts ----------
-// Jede Folie nutzt das Bild der Titelfolie (ohne Titeltext) als Hintergrund.
-const BG = { path: A("bg_titelbild_rand.jpg") };
+// Hintergrund wie bei den anderen Folien: Titelbild gleichmäßig beige verblasst, ohne Rand und Kasten.
+const BG = { path: A("bg_titelbild_blass.jpg") };
+const MUTED = C.accent5;
 pres.defineSlideMaster({
   title: "Kapitel",
   background: BG,
   objects: [
-    // Positionen wie "Franz Kafka / Die Verwandlung" auf der Titelfolie
-    { placeholder: { options: { name: "kicker", type: "body", x: 3.55, y: 1.12, w: 5.0, h: 0.45, align: "center", fontSize: 22, color: C.text1, charSpacing: 4, fontFace: THEME.headFontFace }, text: "" } },
-    { placeholder: { options: { name: "title", type: "title", x: 3.2, y: 1.72, w: 5.7, h: 1.9, align: "center", valign: "middle", fontSize: 44, color: C.text1, fontFace: THEME.headFontFace, lineSpacingMultiple: 0.9 }, text: "" } },
-    { placeholder: { options: { name: "sub", type: "body", x: 3.75, y: 3.78, w: 4.6, h: 0.5, align: "center", fontSize: 15, italic: true, color: C.text1 }, text: "" } },
+    { placeholder: { options: { name: "kicker", type: "body", x: 1.5, y: 1.25, w: 7, h: 0.45, align: "center", fontSize: 20, color: C.text1, charSpacing: 4 }, text: "" } },
+    { placeholder: { options: { name: "title", type: "title", x: 1.0, y: 1.85, w: 8, h: 1.7, align: "center", valign: "middle", fontSize: 44, bold: true, color: C.text1, lineSpacingMultiple: 0.95 }, text: "" } },
+    { placeholder: { options: { name: "sub", type: "body", x: 1.5, y: 3.8, w: 7, h: 0.5, align: "center", fontSize: 16, italic: true, color: C.text2 }, text: "" } },
   ],
 });
 pres.defineSlideMaster({
   title: "Inhalt",
   background: BG,
+  slideNumber: { x: 9.0, y: 5.2, w: 0.5, h: 0.25, fontSize: 9, color: MUTED, align: "right" },
   objects: [
-    { rect: { x: 0.35, y: 0.25, w: 9.3, h: 5.125, fill: { color: C.background2, transparency: 20 }, line: { color: C.accent2, width: 0.75 } } },
-    { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.4, w: 8.8, h: 0.7, align: "left", fontSize: 28, bold: true, color: C.text1, fontFace: THEME.headFontFace, margin: 0 }, text: "" } },
+    { text: { text: "Franz Kafka: Die Verwandlung – Motiv: Vater-Sohn-Beziehung", options: { x: 0.5, y: 5.2, w: 6, h: 0.25, fontSize: 9, color: MUTED, margin: 0 } } },
+    { placeholder: { options: { name: "kicker", type: "body", x: 0.6, y: 0.28, w: 8.8, h: 0.25, align: "left", fontSize: 9, bold: true, color: MUTED, charSpacing: 2, margin: 0 }, text: "" } },
+    { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.55, w: 8.8, h: 0.6, align: "left", fontSize: 28, bold: true, color: C.text1, margin: 0 }, text: "" } },
   ],
 });
 
@@ -69,13 +71,13 @@ function points(s, items, y0 = 1.3) {
 }
 
 // Rechte Spalte: Zitate aus dem Buch. hi = wichtig (rot hinterlegt)
-const QX = 5.2, QW = 4.25, QBOTTOM = 5.22;
+const QX = 5.2, QW = 4.25, QBOTTOM = 5.08;
 function quotes(s, list, y0 = 1.25) {
   // größte Schrift wählen (12,5 → 11 pt), bei der alle Zitate in die Spalte passen
   const nb = (r) => "\u00A0(" + r.replace(/ /g, "\u00A0") + ")";
   const height = (t, ref, fs) => lines(t + nb(ref), 62 * 11 / fs) * 0.19 * fs / 11 + 0.27;
   let fs = 12.5;
-  while (fs > 11 && list.reduce((sum, q) => sum + height(q.t, q.ref, fs) + 0.09, y0) - 0.09 > QBOTTOM) fs -= 0.5;
+  while (fs > 10.5 && list.reduce((sum, q) => sum + height(q.t, q.ref, fs) + 0.09, y0) - 0.09 > QBOTTOM) fs -= 0.5;
   let y = y0;
   list.forEach(({ t, ref, hi }, i) => {
     const h = height(t, ref, fs);
@@ -95,7 +97,13 @@ function quotes(s, list, y0 = 1.25) {
   });
   if (y - 0.09 > QBOTTOM) console.warn("WARNUNG: Zitate zu hoch", (y - 0.09).toFixed(2));
 }
-const content = (title) => { const s = pres.addSlide({ masterName: "Inhalt", sectionTitle: SEC }); s.addText(title, { placeholder: "title" }); return s; };
+let nContent = 0;
+const content = (title) => {
+  const s = pres.addSlide({ masterName: "Inhalt", sectionTitle: SEC });
+  s.addText(`MOTIV: VATER-SOHN-BEZIEHUNG · FOLIE ${++nContent} VON 6`, { placeholder: "kicker" });
+  s.addText(title, { placeholder: "title" });
+  return s;
+};
 const SEC = "Vater-Sohn-Beziehung";
 
 // ===== Folie 1: Kapitel =====
@@ -104,8 +112,8 @@ let s = pres.addSlide({ masterName: "Kapitel", sectionTitle: SEC });
 s.addText("Motiv", { placeholder: "kicker" });
 s.addText("Vater-Sohn-\nBeziehung", { placeholder: "title" });
 s.addText("Macht, Schuld und Ohnmacht in „Die Verwandlung“", { placeholder: "sub" });
-rule(s, 4.53, 1.62, 2.54, "Linie oben");
-rule(s, 4.53, 3.68, 2.54, "Linie unten");
+rule(s, 3.6, 1.75, 2.8, "Linie oben");
+rule(s, 3.6, 3.65, 2.8, "Linie unten");
 s.addNotes(
 `[ca. 30 Sek.]
 Mein Teil ist das Motiv der Vater-Sohn-Beziehung.

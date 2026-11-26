@@ -34,14 +34,7 @@ clean = cv2.copyMakeBorder(clean, 10, 10, 0, 0, cv2.BORDER_REFLECT)  # auf 1920x
 cv2.imwrite(out, clean, [cv2.IMWRITE_JPEG_QUALITY, 92])
 cv2.imwrite(out.replace(".jpg", "_mask.png"), mask)
 
-# Variante mit beigem Rand: Bildränder laufen weich in Beige aus (wie bei den anderen Folien)
-H, W = clean.shape[:2]
-yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-def fade(dist, inner=35, width=240):                          # 0 am Rand -> 1 im Bild
-    t = np.clip((dist - inner) / width, 0, 1)
-    return t * t * (3 - 2 * t)
-alpha = 1 - fade(np.minimum(xx, W - 1 - xx)) * fade(np.minimum(yy, H - 1 - yy))  # weiche, runde Ecken
-beige = np.array([196, 214, 228], np.float32)                  # BGR ≈ #E4D6C4
-rand = clean.astype(np.float32) * (1 - alpha[..., None]) + beige * alpha[..., None]
-rand = np.clip(rand + np.random.default_rng(2).normal(0, 3, rand.shape) * alpha[..., None], 0, 255).astype(np.uint8)
-cv2.imwrite(out.replace(".jpg", "_rand.jpg"), rand, [cv2.IMWRITE_JPEG_QUALITY, 92])
+# Variante "verblasst": Bild gleichmäßig mit Beige überlagert (wie die Folien der anderen)
+beige = np.array([204, 221, 233], np.float32)                  # BGR ≈ #E9DDCC
+faded = clean.astype(np.float32) * 0.15 + beige * 0.85
+cv2.imwrite(out.replace(".jpg", "_blass.jpg"), np.clip(faded, 0, 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 92])
