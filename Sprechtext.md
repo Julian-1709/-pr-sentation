@@ -1,8 +1,8 @@
 # Sprechtext – Motiv: Vater-Sohn-Beziehung
 
-Dauer ca. 6–7 Minuten. **ROT VORLESEN →** markiert die Zitate, die auf der Folie rot hinterlegt sind und vorgelesen werden sollten. Die übrigen Zitate stehen als Beleg auf der Folie.
+Dauer ca. 6–7 Minuten. **ROT VORLESEN →** markiert die Zitate, die auf der Folie rot hinterlegt sind. Die übrigen Zitate stehen als Beleg auf der Folie.
 
-Zitiert nach dem Originaltext (1915, alte Rechtschreibung „daß“). Teil I–III = die drei Kapitel der Erzählung.
+Die Zeilenangaben (Z.) beziehen sich auf `Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf` (Text der Erstausgabe 1915, alte Rechtschreibung „daß“, durchgehend nummeriert).
 
 ## Folie 1: 
 
@@ -10,7 +10,7 @@ Zitiert nach dem Originaltext (1915, alte Rechtschreibung „daß“). Teil I–
 
 Mein Teil ist das Motiv der Vater-Sohn-Beziehung.
 
-Man kann „Die Verwandlung“ nicht nur als Geschichte über einen Mann lesen, der zum Käfer wird, sondern auch als Machtkampf zwischen Vater und Sohn. Ich konzentriere mich auf vier Stationen: die Ausgangslage, die erste Begegnung, den Apfelwurf und Gregors Tod. Zum Schluss verbinde ich das mit Kafkas eigenem Vater.
+Man kann „Die Verwandlung“ nicht nur als Geschichte über einen Mann lesen, der zum Käfer wird, sondern auch als Machtkampf zwischen Vater und Sohn. Ich konzentriere mich auf vier Stationen: die Ausgangslage, die erste Begegnung, den Apfelwurf und Gregors Tod. Zum Schluss ziehe ich ein Fazit.
 
 
 
@@ -82,10 +82,16 @@ Als Gregor tot ist, sagt der Vater: **ROT VORLESEN →** „Nun, jetzt können w
 
 [ca. 1 Min.]
 
-Kafkas eigener Vater Hermann war körperlich stark und sehr dominant. 1919 schrieb Kafka ihm einen langen Brief, den er nie abschickte. Darin schreibt er zum Beispiel: „Ich war ja schon niedergedrückt durch Deine bloße Körperlichkeit.“ Wie Gregor vor den Stiefelsohlen.
+Zum Schluss mein Fazit in drei Punkten.
 
-Noch auffälliger: Im Brief erzählt Kafka, dass sein Vater einen Freund von ihm „mit Ungeziefer“ verglichen hat. Genau dieses Wort benutzt Kafka im ersten Satz der Verwandlung.
+Erstens: Gregor opfert sich für seine Familie und trägt sogar die Schulden des Vaters. Anerkennung bekommt er dafür nicht, er ist nur noch der, der das Geld bringt.
 
-Kafka sagt selbst: **ROT VORLESEN →** „Mein Schreiben handelte von Dir, ich klagte dort ja nur, was ich an Deiner Brust nicht klagen konnte.“
+Zweitens: Mit jeder Konfrontation wird der Vater stärker und gewalttätiger, während Gregor immer schwächer wird – bis zur tödlichen Wunde durch den Apfel.
 
-Mein Fazit: Gregor opfert sich für die Familie, wird vom Vater verletzt und am Ende aufgegeben. Dieses Gefühl, vom Vater nicht anerkannt zu werden, kannte Kafka selbst. Vielen Dank!
+Drittens: Gregor ist für die Familie nur noch eine Pflicht. Im Text heißt es, man müsse „den Widerwillen hinunterzuschlucken und zu dulden, nichts als zu dulden“. Und ganz am Ende, nach Gregors Tod, sagt der Vater: **ROT VORLESEN →** „Also kommt doch her. Laßt schon endlich die alten Sachen. Und nehmt auch ein wenig Rücksicht auf mich.“ Der Sohn ist vergessen, und der Vater stellt sich selbst wieder in den Mittelpunkt.
+
+Die Vater-Sohn-Beziehung zeigt also, wie ein Sohn an der Härte und fehlenden Anerkennung seines Vaters zerbricht. Vielen Dank!
+
+## Folie 8: 
+
+Quellen bitte selbst eintragen. Tipp: Die Zeilenangaben (Z.) beziehen sich auf die zeilennummerierte Textgrundlage (Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf) – Text der Erstausgabe 1915 nach Projekt Gutenberg, E-Book Nr. 22367.

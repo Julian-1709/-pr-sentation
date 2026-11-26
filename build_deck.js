@@ -5,6 +5,9 @@ const pptxgen = require("pptxgenjs");
 const { applyTheme } = require(process.argv[2]);
 
 const A = (f) => path.join(__dirname, "assets", f);
+// Zeilenangaben (von textgrundlage.py berechnet)
+const Z = JSON.parse(require("fs").readFileSync(path.join(__dirname, "zeilen.json"), "utf8"));
+const zref = (k) => { if (!Z[k]) throw new Error("Keine Zeilenangabe für: " + k); return Z[k]; };
 const OUT = path.join(__dirname, "Vater-Sohn-Beziehung.pptx");
 
 const THEME = {
@@ -28,13 +31,14 @@ const C = pres.SchemeColor;
 // Hintergrund wie bei den anderen Folien: Titelbild gleichmäßig beige verblasst, ohne Rand und Kasten.
 const BG = { path: A("bg_titelbild_blass.jpg") };
 const MUTED = C.accent5;
+// Erste Folie: Titelbild in Originalfarben, Text an der Stelle von "Franz Kafka / Die Verwandlung"
 pres.defineSlideMaster({
   title: "Kapitel",
-  background: BG,
+  background: { path: A("bg_titelbild.jpg") },
   objects: [
-    { placeholder: { options: { name: "kicker", type: "body", x: 1.5, y: 1.25, w: 7, h: 0.45, align: "center", fontSize: 20, color: C.text1, charSpacing: 4 }, text: "" } },
-    { placeholder: { options: { name: "title", type: "title", x: 1.0, y: 1.85, w: 8, h: 1.7, align: "center", valign: "middle", fontSize: 44, bold: true, color: C.text1, lineSpacingMultiple: 0.95 }, text: "" } },
-    { placeholder: { options: { name: "sub", type: "body", x: 1.5, y: 3.8, w: 7, h: 0.5, align: "center", fontSize: 16, italic: true, color: C.text2 }, text: "" } },
+    { placeholder: { options: { name: "kicker", type: "body", x: 3.55, y: 1.12, w: 5.0, h: 0.45, align: "center", fontSize: 22, color: C.text1, charSpacing: 4, fontFace: "Georgia" }, text: "" } },
+    { placeholder: { options: { name: "title", type: "title", x: 3.2, y: 1.72, w: 5.7, h: 1.9, align: "center", valign: "middle", fontSize: 44, color: C.text1, fontFace: "Georgia", lineSpacingMultiple: 0.9 }, text: "" } },
+    { placeholder: { options: { name: "sub", type: "body", x: 3.75, y: 3.78, w: 4.6, h: 0.5, align: "center", fontSize: 15, italic: true, color: C.text1 }, text: "" } },
   ],
 });
 pres.defineSlideMaster({
@@ -59,11 +63,13 @@ const lines = (str, cpl) => str.split("\n").reduce((n, p) => n + Math.max(1, Mat
 const LX = 0.6, LW = 4.35;
 function points(s, items, y0 = 1.3) {
   let y = y0;
-  items.forEach(([h, d], i) => {
-    const hh = 0.3, dh = lines(d, 45) * 0.24 + 0.05;
+  items.forEach(([h, d, a], i) => {
+    const ref = a ? " (" + zref(a.anchor).replace(/ /g, "\u00A0") + ")" : "";
+    const hh = 0.3, dh = lines(d + ref, 45) * 0.24 + 0.05;
     txt(s, [
       { text: h, options: { bold: true, fontSize: 15, color: C.accent1, fontFace: THEME.headFontFace, breakLine: true } },
       { text: d, options: { fontSize: 14 } },
+      ...(ref ? [{ text: ref, options: { fontSize: 11, color: MUTED } }] : []),
     ], { x: LX, y, w: LW, h: hh + dh, margin: 0, paraSpaceAfter: 2, objectName: `Punkt ${i + 1}` });
     y += hh + dh + 0.22;
   });
@@ -73,6 +79,7 @@ function points(s, items, y0 = 1.3) {
 // Rechte Spalte: Zitate aus dem Buch. hi = wichtig (rot hinterlegt)
 const QX = 5.2, QW = 4.25, QBOTTOM = 5.08;
 function quotes(s, list, y0 = 1.25) {
+  list = list.map((q) => ({ ...q, ref: q.ref === "Buch" ? zref(q.t) : q.ref }));
   // größte Schrift wählen (12,5 → 11 pt), bei der alle Zitate in die Spalte passen
   const nb = (r) => "\u00A0(" + r.replace(/ /g, "\u00A0") + ")";
   const height = (t, ref, fs) => lines(t + nb(ref), 62 * 11 / fs) * 0.19 * fs / 11 + 0.27;
@@ -100,7 +107,7 @@ function quotes(s, list, y0 = 1.25) {
 let nContent = 0;
 const content = (title) => {
   const s = pres.addSlide({ masterName: "Inhalt", sectionTitle: SEC });
-  s.addText(`MOTIV: VATER-SOHN-BEZIEHUNG · FOLIE ${++nContent} VON 6`, { placeholder: "kicker" });
+  s.addText(`MOTIV: VATER-SOHN-BEZIEHUNG · FOLIE ${++nContent} VON 7`, { placeholder: "kicker" });
   s.addText(title, { placeholder: "title" });
   return s;
 };
@@ -112,28 +119,28 @@ let s = pres.addSlide({ masterName: "Kapitel", sectionTitle: SEC });
 s.addText("Motiv", { placeholder: "kicker" });
 s.addText("Vater-Sohn-\nBeziehung", { placeholder: "title" });
 s.addText("Macht, Schuld und Ohnmacht in „Die Verwandlung“", { placeholder: "sub" });
-rule(s, 3.6, 1.75, 2.8, "Linie oben");
-rule(s, 3.6, 3.65, 2.8, "Linie unten");
+rule(s, 4.53, 1.62, 2.54, "Linie oben");
+rule(s, 4.53, 3.68, 2.54, "Linie unten");
 s.addNotes(
 `[ca. 30 Sek.]
 Mein Teil ist das Motiv der Vater-Sohn-Beziehung.
-Man kann „Die Verwandlung“ nicht nur als Geschichte über einen Mann lesen, der zum Käfer wird, sondern auch als Machtkampf zwischen Vater und Sohn. Ich konzentriere mich auf vier Stationen: die Ausgangslage, die erste Begegnung, den Apfelwurf und Gregors Tod. Zum Schluss verbinde ich das mit Kafkas eigenem Vater.
+Man kann „Die Verwandlung“ nicht nur als Geschichte über einen Mann lesen, der zum Käfer wird, sondern auch als Machtkampf zwischen Vater und Sohn. Ich konzentriere mich auf vier Stationen: die Ausgangslage, die erste Begegnung, den Apfelwurf und Gregors Tod. Zum Schluss ziehe ich ein Fazit.
 
 HINWEIS: Rot hinterlegte Zitate auf den Folien = im Vortrag vorlesen. Die anderen stehen als Beleg auf der Folie, müssen aber nicht gesagt werden.`);
 
 // ===== Folie 2: Ausgangslage =====
 s = content("Ausgangslage: Der Sohn als Ernährer");
 points(s, [
-  ["Rollentausch", "Nach dem Bankrott des Vaters ernährt Gregor die ganze Familie und zahlt die Schulden des Vaters ab."],
-  ["Pflicht statt Anerkennung", "Die Familie nimmt das Geld selbstverständlich an – echte Dankbarkeit oder Nähe gibt es nicht mehr."],
-  ["Der Vater verschweigt Geld", "Heimlich hat der Vater ein kleines Vermögen behalten. Gregor hätte früher kündigen können – und freut sich trotzdem."],
+  ["Rollentausch", "Nach dem Bankrott des Vaters ernährt Gregor die ganze Familie und zahlt die Schulden des Vaters ab.", { anchor: "Schuld der Eltern an ihn abzuzahlen" }],
+  ["Pflicht statt Anerkennung", "Die Familie nimmt das Geld selbstverständlich an – echte Dankbarkeit oder Nähe gibt es nicht mehr.", { anchor: "Man hatte sich eben daran gewöhnt, sowohl die Familie, als auch Gregor, man nahm das Geld dankbar an, er lieferte es gern ab, aber eine besondere Wärme wollte sich nicht mehr ergeben." }],
+  ["Der Vater verschweigt Geld", "Heimlich hat der Vater ein kleines Vermögen behalten. Gregor hätte früher kündigen können – und freut sich trotzdem.", { anchor: "daß trotz allen Unglücks ein allerdings ganz kleines Vermögen aus der alten Zeit noch vorhanden war" }],
 ]);
 quotes(s, [
-  { t: "„Wenn ich mich nicht wegen meiner Eltern zurückhielte, ich hätte längst gekündigt“", ref: "Teil I", hi: true },
-  { t: "„habe ich einmal das Geld beisammen, um die Schuld der Eltern an ihn abzuzahlen – es dürfte noch fünf bis sechs Jahre dauern –, mache ich die Sache unbedingt.“", ref: "Teil I" },
-  { t: "„man nahm das Geld dankbar an, er lieferte es gern ab, aber eine besondere Wärme wollte sich nicht mehr ergeben.“", ref: "Teil II", hi: true },
-  { t: "„daß trotz allen Unglücks ein allerdings ganz kleines Vermögen aus der alten Zeit noch vorhanden war“", ref: "Teil II" },
-  { t: "„Gregor, hinter seiner Türe, nickte eifrig, erfreut über diese unerwartete Vorsicht und Sparsamkeit.“", ref: "Teil II" },
+  { t: "„Wenn ich mich nicht wegen meiner Eltern zurückhielte, ich hätte längst gekündigt“", ref: "Buch", hi: true },
+  { t: "„habe ich einmal das Geld beisammen, um die Schuld der Eltern an ihn abzuzahlen – es dürfte noch fünf bis sechs Jahre dauern –, mache ich die Sache unbedingt.“", ref: "Buch" },
+  { t: "„man nahm das Geld dankbar an, er lieferte es gern ab, aber eine besondere Wärme wollte sich nicht mehr ergeben.“", ref: "Buch", hi: true },
+  { t: "„daß trotz allen Unglücks ein allerdings ganz kleines Vermögen aus der alten Zeit noch vorhanden war“", ref: "Buch" },
+  { t: "„Gregor, hinter seiner Türe, nickte eifrig, erfreut über diese unerwartete Vorsicht und Sparsamkeit.“", ref: "Buch" },
 ]);
 s.addNotes(
 `[ca. 1 Min.]
@@ -145,16 +152,16 @@ Später erfährt Gregor, dass der Vater heimlich ein kleines Vermögen behalten 
 // ===== Folie 3: Erste Konfrontation =====
 s = content("Teil I: Der Vater als Gegner");
 points(s, [
-  ["Drohung von Anfang an", "Schon beim ersten Klopfen benutzt der Vater die Faust – noch bevor er Gregor überhaupt gesehen hat."],
-  ["Hass und Hilflosigkeit", "Beim Anblick des Käfers zeigt er Feindseligkeit und weint zugleich. Er ist überfordert, reagiert aber mit Aggression."],
-  ["Gewalt statt Gespräch", "Mit Stock und Zeitung treibt er Gregor zurück. Den brutalen Stoß empfindet Gregor sogar als „erlösend“."],
+  ["Drohung von Anfang an", "Schon beim ersten Klopfen benutzt der Vater die Faust – noch bevor er Gregor überhaupt gesehen hat.", { anchor: "schon klopfte an der einen Seitentür der Vater, schwach, aber schon mit der Faust." }],
+  ["Hass und Hilflosigkeit", "Beim Anblick des Käfers zeigt er Feindseligkeit und weint zugleich. Er ist überfordert, reagiert aber mit Aggression.", { anchor: "Der Vater ballte mit feindseligem Ausdruck die Faust, als wolle er Gregor in sein Zimmer zurückstoßen, sah sich dann unsicher im Wohnzimmer um, beschattete dann mit den Händen die Augen und weinte, daß sich seine mächtige Brust schüttelte." }],
+  ["Gewalt statt Gespräch", "Mit Stock und Zeitung treibt er Gregor zurück. Den brutalen Stoß empfindet Gregor sogar als „erlösend“.", { anchor: "packte er mit der Rechten den Stock des Prokuristen" }],
 ]);
 quotes(s, [
-  { t: "„schon klopfte an der einen Seitentür der Vater, schwach, aber schon mit der Faust.“", ref: "Teil I" },
-  { t: "„Der Vater ballte mit feindseligem Ausdruck die Faust, als wolle er Gregor in sein Zimmer zurückstoßen, […] und weinte, daß sich seine mächtige Brust schüttelte.“", ref: "Teil I", hi: true },
-  { t: "„packte er mit der Rechten den Stock des Prokuristen […], holte mit der Linken eine große Zeitung vom Tisch“", ref: "Teil I" },
-  { t: "„Unerbittlich drängte der Vater und stieß Zischlaute aus, wie ein Wilder.“", ref: "Teil I", hi: true },
-  { t: "„da gab ihm der Vater von hinten einen jetzt wahrhaftig erlösenden starken Stoß, und er flog, heftig blutend, weit in sein Zimmer hinein.“", ref: "Teil I" },
+  { t: "„schon klopfte an der einen Seitentür der Vater, schwach, aber schon mit der Faust.“", ref: "Buch" },
+  { t: "„Der Vater ballte mit feindseligem Ausdruck die Faust, als wolle er Gregor in sein Zimmer zurückstoßen, […] und weinte, daß sich seine mächtige Brust schüttelte.“", ref: "Buch", hi: true },
+  { t: "„packte er mit der Rechten den Stock des Prokuristen […], holte mit der Linken eine große Zeitung vom Tisch“", ref: "Buch" },
+  { t: "„Unerbittlich drängte der Vater und stieß Zischlaute aus, wie ein Wilder.“", ref: "Buch", hi: true },
+  { t: "„da gab ihm der Vater von hinten einen jetzt wahrhaftig erlösenden starken Stoß, und er flog, heftig blutend, weit in sein Zimmer hinein.“", ref: "Buch" },
 ]);
 s.addNotes(
 `[ca. 1 Min. 15 Sek.]
@@ -167,15 +174,15 @@ Den Stoß, nach dem Gregor „heftig blutend“ ins Zimmer fliegt, empfindet er 
 // ===== Folie 4: Verwandlung des Vaters =====
 s = content("Teil II: Die Verwandlung des Vaters");
 points(s, [
-  ["Vorher: schwach", "Früher lag der Vater müde im Bett oder empfing Gregor im Schlafrock – kaum fähig aufzustehen."],
-  ["Nachher: Autorität", "Jetzt arbeitet er als Bankdiener, steht aufrecht in Uniform. Aus Gregors Perspektive wirkt er riesig."],
-  ["Macht als Wippe", "Je schwächer Gregor wird, desto stärker wird der Vater. Er legt die Uniform nicht einmal zu Hause ab."],
+  ["Vorher: schwach", "Früher lag der Vater müde im Bett oder empfing Gregor im Schlafrock – kaum fähig aufzustehen.", { anchor: "Der gleiche Mann, der müde im Bett vergraben lag" }],
+  ["Nachher: Autorität", "Jetzt arbeitet er als Bankdiener, steht aufrecht in Uniform. Aus Gregors Perspektive wirkt er riesig.", { anchor: "Nun aber war er recht gut aufgerichtet" }],
+  ["Macht als Wippe", "Je schwächer Gregor wird, desto stärker wird der Vater. Er legt die Uniform nicht einmal zu Hause ab.", { anchor: "Mit einer Art Eigensinn weigerte sich der Vater, auch zu Hause seine Dieneruniform abzulegen" }],
 ]);
 quotes(s, [
-  { t: "„war das noch der Vater? Der gleiche Mann, der müde im Bett vergraben lag, wenn früher Gregor zu einer Geschäftsreise ausgerückt war; der ihn an Abenden der Heimkehr im Schlafrock im Lehnstuhl empfangen hatte“", ref: "Teil II", hi: true },
-  { t: "„Nun aber war er recht gut aufgerichtet; in eine straffe blaue Uniform mit Goldknöpfen gekleidet, wie sie Diener der Bankinstitute tragen“", ref: "Teil II", hi: true },
-  { t: "„Gregor staunte über die Riesengröße seiner Stiefelsohlen.“", ref: "Teil II" },
-  { t: "„Mit einer Art Eigensinn weigerte sich der Vater, auch zu Hause seine Dieneruniform abzulegen“", ref: "Teil III" },
+  { t: "„war das noch der Vater? Der gleiche Mann, der müde im Bett vergraben lag, wenn früher Gregor zu einer Geschäftsreise ausgerückt war; der ihn an Abenden der Heimkehr im Schlafrock im Lehnstuhl empfangen hatte“", ref: "Buch", hi: true },
+  { t: "„Nun aber war er recht gut aufgerichtet; in eine straffe blaue Uniform mit Goldknöpfen gekleidet, wie sie Diener der Bankinstitute tragen“", ref: "Buch", hi: true },
+  { t: "„Gregor staunte über die Riesengröße seiner Stiefelsohlen.“", ref: "Buch" },
+  { t: "„Mit einer Art Eigensinn weigerte sich der Vater, auch zu Hause seine Dieneruniform abzulegen“", ref: "Buch" },
 ]);
 s.addNotes(
 `[ca. 1 Min. 15 Sek.]
@@ -187,16 +194,16 @@ Wie bei einer Wippe: Je schwächer Gregor, desto stärker der Vater. Ironisch is
 // ===== Folie 5: Apfelwurf =====
 s = content("Teil II: Der Apfelwurf");
 points(s, [
-  ["Vorurteil", "Der Vater fragt nicht nach, sondern unterstellt Gregor sofort eine Gewalttat."],
-  ["Geplanter Angriff", "Er füllt sich die Taschen und „bombardiert“ den Sohn – es ist kein Ausrutscher, sondern ein Entschluss."],
-  ["Die tödliche Wunde", "Der Apfel bleibt im Rücken stecken, verfault und schwächt Gregor bis zum Tod. Der Vater ist damit mitverantwortlich."],
+  ["Vorurteil", "Der Vater fragt nicht nach, sondern unterstellt Gregor sofort eine Gewalttat.", { anchor: "»Ich habe es ja erwartet«, sagte der Vater, »ich habe es euch ja immer gesagt, aber ihr Frauen wollt nicht hören.«" }],
+  ["Geplanter Angriff", "Er füllt sich die Taschen und „bombardiert“ den Sohn – es ist kein Ausrutscher, sondern ein Entschluss.", { anchor: "Aus der Obstschale auf der Kredenz hatte er sich die Taschen gefüllt und warf nun, ohne vorläufig scharf zu zielen, Apfel für Apfel." }],
+  ["Die tödliche Wunde", "Der Apfel bleibt im Rücken stecken, verfault und schwächt Gregor bis zum Tod. Der Vater ist damit mitverantwortlich.", { anchor: "Den verfaulten Apfel in seinem Rücken und die entzündete Umgebung" }],
 ]);
 quotes(s, [
-  { t: "„»Ich habe es ja erwartet«, sagte der Vater, »ich habe es euch ja immer gesagt, aber ihr Frauen wollt nicht hören.«“", ref: "Teil II" },
-  { t: "„der Vater hatte sich entschlossen, ihn zu bombardieren.“", ref: "Teil II", hi: true },
-  { t: "„Ein ihm sofort nachfliegender drang dagegen förmlich in Gregors Rücken ein“", ref: "Teil II", hi: true },
-  { t: "„der Apfel blieb, da ihn niemand zu entfernen wagte, als sichtbares Andenken im Fleische sitzen“", ref: "Teil III", hi: true },
-  { t: "„Den verfaulten Apfel in seinem Rücken und die entzündete Umgebung […] spürte er schon kaum.“", ref: "Teil III" },
+  { t: "„»Ich habe es ja erwartet«, sagte der Vater, »ich habe es euch ja immer gesagt, aber ihr Frauen wollt nicht hören.«“", ref: "Buch" },
+  { t: "„der Vater hatte sich entschlossen, ihn zu bombardieren.“", ref: "Buch", hi: true },
+  { t: "„Ein ihm sofort nachfliegender drang dagegen förmlich in Gregors Rücken ein“", ref: "Buch", hi: true },
+  { t: "„der Apfel blieb, da ihn niemand zu entfernen wagte, als sichtbares Andenken im Fleische sitzen“", ref: "Buch", hi: true },
+  { t: "„Den verfaulten Apfel in seinem Rücken und die entzündete Umgebung […] spürte er schon kaum.“", ref: "Buch" },
 ]);
 s.addNotes(
 `[ca. 1 Min. 15 Sek.]
@@ -209,16 +216,16 @@ Der Apfel erinnert an den Sündenfall – Schuld und Strafe. Der Vater bestraft 
 // ===== Folie 6: Urteil und Tod =====
 s = content("Teil III: Das Urteil");
 points(s, [
-  ["Der Vater stimmt zu", "Die Schwester fordert, „es“ loszuwerden. Der Vater gibt ihr sofort recht – Gregor ist für ihn kein Sohn mehr."],
-  ["Gregor unterwirft sich", "Bis zuletzt denkt Gregor voller Liebe an die Familie und akzeptiert, dass er verschwinden muss."],
-  ["Erleichterung", "Nach Gregors Tod dankt der Vater Gott, wirft die Zimmerherren hinaus und ist wieder Herr im Haus."],
+  ["Der Vater stimmt zu", "Die Schwester fordert, „es“ loszuwerden. Der Vater gibt ihr sofort recht – Gregor ist für ihn kein Sohn mehr.", { anchor: "»Sie hat tausendmal Recht,« sagte der Vater für sich." }],
+  ["Gregor unterwirft sich", "Bis zuletzt denkt Gregor voller Liebe an die Familie und akzeptiert, dass er verschwinden muss.", { anchor: "An seine Familie dachte er mit Rührung und Liebe zurück." }],
+  ["Erleichterung", "Nach Gregors Tod dankt der Vater Gott, wirft die Zimmerherren hinaus und ist wieder Herr im Haus.", { anchor: "»Verlassen Sie sofort meine Wohnung!« sagte Herr Samsa" }],
 ]);
 quotes(s, [
-  { t: "„wir müssen versuchen, es loszuwerden.“ – „»Sie hat tausendmal Recht,« sagte der Vater für sich.“", ref: "Teil III", hi: true },
-  { t: "„»Wenn er uns verstünde,« sagte der Vater halb fragend“", ref: "Teil III" },
-  { t: "„An seine Familie dachte er mit Rührung und Liebe zurück. Seine Meinung darüber, daß er verschwinden müsse, war womöglich noch entschiedener, als die seiner Schwester.“", ref: "Teil III", hi: true },
-  { t: "„»Nun,« sagte Herr Samsa, »jetzt können wir Gott danken.«“", ref: "Teil III", hi: true },
-  { t: "„»Verlassen Sie sofort meine Wohnung!« sagte Herr Samsa“", ref: "Teil III" },
+  { t: "„wir müssen versuchen, es loszuwerden.“ – „»Sie hat tausendmal Recht,« sagte der Vater für sich.“", ref: "Buch", hi: true },
+  { t: "„»Wenn er uns verstünde,« sagte der Vater halb fragend“", ref: "Buch" },
+  { t: "„An seine Familie dachte er mit Rührung und Liebe zurück. Seine Meinung darüber, daß er verschwinden müsse, war womöglich noch entschiedener, als die seiner Schwester.“", ref: "Buch", hi: true },
+  { t: "„»Nun,« sagte Herr Samsa, »jetzt können wir Gott danken.«“", ref: "Buch", hi: true },
+  { t: "„»Verlassen Sie sofort meine Wohnung!« sagte Herr Samsa“", ref: "Buch" },
 ]);
 s.addNotes(
 `[ca. 1 Min. 15 Sek.]
@@ -226,24 +233,32 @@ Im dritten Teil fällt das Urteil. Nach dem Geigenabend sagt die Schwester: „w
 Und Gregor wehrt sich nicht. In seiner letzten Nacht heißt es: ROT VORLESEN → „An seine Familie dachte er mit Rührung und Liebe zurück. Seine Meinung darüber, daß er verschwinden müsse, war womöglich noch entschiedener, als die seiner Schwester.“ Gregor übernimmt das Urteil über sich selbst – völlige Unterwerfung.
 Als Gregor tot ist, sagt der Vater: ROT VORLESEN → „Nun, jetzt können wir Gott danken.“ Kein Wort der Trauer. Danach wirft er die Zimmerherren hinaus: „Verlassen Sie sofort meine Wohnung!“ Der Vater ist wieder das Oberhaupt der Familie.`);
 
-// ===== Folie 7: Deutung =====
-s = content("Deutung: Kafka und sein Vater");
+// ===== Folie 7: Fazit =====
+s = content("Fazit");
 points(s, [
-  ["Biografischer Hintergrund", "Hermann Kafka war stark, laut und dominant. Franz fühlte sich ihm gegenüber schwach und wertlos."],
-  ["„Ungeziefer“", "Hermann verglich einen Freund von Franz mit Ungeziefer – genau das Wort, das Kafka für Gregor wählt."],
-  ["Fazit", "Die Erzählung zeigt, wie ein Sohn an der Härte und fehlenden Anerkennung des Vaters zerbricht."],
+  ["Opfer ohne Anerkennung", "Gregor trägt die Familie und die Schulden des Vaters – doch er bleibt für sie nur der Geldverdiener.", { anchor: "eine besondere Wärme wollte sich nicht mehr ergeben" }],
+  ["Gewalt und Machtwechsel", "Mit jeder Konfrontation wird der Vater stärker und gewalttätiger, Gregor schwächer – bis zur tödlichen Wunde.", { anchor: "der Vater hatte sich entschlossen, ihn zu bombardieren." }],
+  ["Familie als Pflicht", "Gregor wird nur noch geduldet. Am Ende stellt sich der Vater wieder selbst in den Mittelpunkt.", { anchor: "Gebot der Familienpflicht" }],
 ]);
 quotes(s, [
-  { t: "„Ich war ja schon niedergedrückt durch Deine bloße Körperlichkeit.“", ref: "Brief an den Vater, 1919" },
-  { t: "„Ohne ihn zu kennen, verglichst Du ihn in einer schrecklichen Weise, die ich schon vergessen habe, mit Ungeziefer“", ref: "Brief an den Vater" },
-  { t: "„Mein Schreiben handelte von Dir, ich klagte dort ja nur, was ich an Deiner Brust nicht klagen konnte.“", ref: "Brief an den Vater", hi: true },
+  { t: "„dem gegenüber es das Gebot der Familienpflicht war, den Widerwillen hinunterzuschlucken und zu dulden, nichts als zu dulden.“", ref: "Buch" },
+  { t: "„»Also kommt doch her. Laßt schon endlich die alten Sachen. Und nehmt auch ein wenig Rücksicht auf mich.«“", ref: "Buch", hi: true },
 ]);
+s.addShape(pres.shapes.RECTANGLE, { x: QX, y: 3.55, w: QW, h: 1.3, objectName: "Kernaussage Kasten", fill: { color: C.accent1, transparency: 0 }, line: { type: "none" } });
+txt(s, "Die Verwandlung zeigt, wie ein Sohn an der Härte und fehlenden Anerkennung seines Vaters zerbricht.", {
+  x: QX + 0.2, y: 3.55, w: QW - 0.4, h: 1.3, valign: "middle", fontSize: 16, bold: true, italic: true, color: C.background2, objectName: "Kernaussage",
+});
 s.addNotes(
 `[ca. 1 Min.]
-Kafkas eigener Vater Hermann war körperlich stark und sehr dominant. 1919 schrieb Kafka ihm einen langen Brief, den er nie abschickte. Darin schreibt er zum Beispiel: „Ich war ja schon niedergedrückt durch Deine bloße Körperlichkeit.“ Wie Gregor vor den Stiefelsohlen.
-Noch auffälliger: Im Brief erzählt Kafka, dass sein Vater einen Freund von ihm „mit Ungeziefer“ verglichen hat. Genau dieses Wort benutzt Kafka im ersten Satz der Verwandlung.
-Kafka sagt selbst: ROT VORLESEN → „Mein Schreiben handelte von Dir, ich klagte dort ja nur, was ich an Deiner Brust nicht klagen konnte.“
-Mein Fazit: Gregor opfert sich für die Familie, wird vom Vater verletzt und am Ende aufgegeben. Dieses Gefühl, vom Vater nicht anerkannt zu werden, kannte Kafka selbst. Vielen Dank!`);
+Zum Schluss mein Fazit in drei Punkten.
+Erstens: Gregor opfert sich für seine Familie und trägt sogar die Schulden des Vaters. Anerkennung bekommt er dafür nicht, er ist nur noch der, der das Geld bringt.
+Zweitens: Mit jeder Konfrontation wird der Vater stärker und gewalttätiger, während Gregor immer schwächer wird – bis zur tödlichen Wunde durch den Apfel.
+Drittens: Gregor ist für die Familie nur noch eine Pflicht. Im Text heißt es, man müsse „den Widerwillen hinunterzuschlucken und zu dulden, nichts als zu dulden“. Und ganz am Ende, nach Gregors Tod, sagt der Vater: ROT VORLESEN → „Also kommt doch her. Laßt schon endlich die alten Sachen. Und nehmt auch ein wenig Rücksicht auf mich.“ Der Sohn ist vergessen, und der Vater stellt sich selbst wieder in den Mittelpunkt.
+Die Vater-Sohn-Beziehung zeigt also, wie ein Sohn an der Härte und fehlenden Anerkennung seines Vaters zerbricht. Vielen Dank!`);
+
+// ===== Folie 8: Quellen (wird selbst ausgefüllt) =====
+s = content("Quellen");
+s.addNotes("Quellen bitte selbst eintragen. Tipp: Die Zeilenangaben (Z.) beziehen sich auf die zeilennummerierte Textgrundlage (Textgrundlage_Die_Verwandlung_mit_Zeilen.pdf) – Text der Erstausgabe 1915 nach Projekt Gutenberg, E-Book Nr. 22367.");
 
 (async () => {
   await pres.writeFile({ fileName: OUT });
